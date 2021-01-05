@@ -1,0 +1,59 @@
+svhn2mnist-sourceonly-s0:
+	implicit_alignment  \
+    --datasets_dir $(datapath) \
+    --base_config ../config/adam_0.0003.yml \
+    --scheduler_config None \
+    --dataset digits --digits \
+    --class_num 10 \
+    --src_address svhn \
+    --tgt_address mnist \
+    --name source_only.both_imbalanced.mild \
+    --train_steps 4000 \
+    --seed 0 \
+    --eval_interval 200 \
+    --machine $(UNAME_N) \
+    --tensorboard_dir $(tensorboardpath) \
+    --group_name digits --batch_size 100 \
+    --disable_prompt --train_loss classifier_loss
+
+# dann
+svhn2mnist-dann:
+	implicit_alignment  \
+    --datasets_dir $(datapath) \
+    --base_config ../config/adam_0.0003.yml \
+    --scheduler_config None \
+    --dataset digits --digits \
+    --class_num 10 \
+    --src_address svhn \
+    --tgt_address mnist \
+    --name baseline.both_imbalanced.mild \
+    --train_steps 4000 \
+    --seed 0 \
+    --eval_interval 500 \
+    --machine $(UNAME_N) \
+    --tensorboard_dir $(tensorboardpath) \
+    --group_name digits --batch_size 100 \
+    --train_loss dann \
+    --disable_prompt --not_save
+
+# DANN+implicit
+svhn2mnist-implicit-s0:
+	implicit_alignment  \
+    --datasets_dir $(datapath) \
+    --base_config ../config/adam_0.0003.yml \
+    --scheduler_config None \
+    --dataset digits --digits \
+    --class_num 10 \
+    --src_address svhn \
+    --tgt_address mnist \
+    --name implicit.both_imbalanced.mild \
+    --train_steps 4000 \
+    --seed 0 \
+    --eval_interval 200 \
+    --machine $(UNAME_N) \
+    --tensorboard_dir $(tensorboardpath) \
+    --group_name digits --batch_size 100 \
+    --disable_prompt --classifier_depth 1 \
+    --self_train --yhat_update_freq 200 --self_train_sampler SelfTrainingVannilaSampler \
+    --train_loss dann \
+    --source_sample_mode --n_way 10 --k_shot 10
